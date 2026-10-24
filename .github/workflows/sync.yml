@@ -4,7 +4,7 @@ on:
   schedule:
     # 每天 UTC 23:00（即北京时间每天早上 07:00）自动运行
     - cron: '0 23 * * *'
-  workflow_dispatch: # 允许在 Actions 页面手动点击 Run workflow 触发
+  workflow_dispatch:
 
 jobs:
   run-sync:
@@ -25,12 +25,31 @@ jobs:
 
       - name: Run Sync Script
         env:
-          # 从 Secrets 读取佳明国内及国际区账号凭证
+          # 佳明国内区账号密码
           GARMIN_CN_EMAIL: ${{ secrets.GARMIN_CN_EMAIL }}
           GARMIN_CN_PASSWORD: ${{ secrets.GARMIN_CN_PASSWORD }}
+          # 佳明国际区账号密码
           GARMIN_GLOBAL_EMAIL: ${{ secrets.GARMIN_GLOBAL_EMAIL }}
           GARMIN_GLOBAL_PASSWORD: ${{ secrets.GARMIN_GLOBAL_PASSWORD }}
-          # 起始时间设置（拉取 2026-09-01 以后的数据，防止风控）
+          # 同步方向与时间配置
+          SOURCE: 'GARMIN_CN'
+          TARGET: 'GARMIN_GLOBAL'
           SYNC_ACTIVITY_START_TIME: ${{ secrets.SYNC_ACTIVITY_START_TIME }}
         run: |
-          python scripts/garmin_to_garmin_global.py
+          cd scripts
+          echo "🔎 正在自动探测并匹配同步脚本..."
+          
+          if [ -f "garmin_cn_to_garmin_global.py" ]; then
+            echo "✅ 找到单向脚本: garmin_cn_to_garmin_global.py"
+            python garmin_cn_to_garmin_global.py
+          elif [ -f "sync.py" ]; then
+            echo "✅ 找到通用脚本: sync.py"
+            python sync.py
+          elif [ -f "main.py" ]; then
+            echo "✅ 找到通用脚本: main.py"
+            python main.py
+          else
+            echo "❌ 未找到对应脚本！当前 scripts 目录下的文件有："
+            ls -la
+            exit 1
+          fi
