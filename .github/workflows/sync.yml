@@ -36,4 +36,4 @@ jobs:
           TARGET: 'GARMIN_GLOBAL'
           SYNC_ACTIVITY_START_TIME: ${{ secrets.SYNC_ACTIVITY_START_TIME }}
         run: |
-          python main.py --source GARMIN_CN --target GARMIN_GLOBAL
+          python main.py
