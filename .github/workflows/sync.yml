@@ -25,14 +25,15 @@ jobs:
 
       - name: Run Sync Script
         env:
-          # 平台凭证（从 Secrets 读取）
+          # 佳明国内区账号密码（从 Secrets 读取）
           GARMIN_CN_EMAIL: ${{ secrets.GARMIN_CN_EMAIL }}
           GARMIN_CN_PASSWORD: ${{ secrets.GARMIN_CN_PASSWORD }}
+          # 佳明国际区账号密码（从 Secrets 读取）
           GARMIN_GLOBAL_EMAIL: ${{ secrets.GARMIN_GLOBAL_EMAIL }}
           GARMIN_GLOBAL_PASSWORD: ${{ secrets.GARMIN_GLOBAL_PASSWORD }}
-          # 同步参数配置：佳明国内 -> 佳明国际
+          # 同步方向配置：佳明国内 -> 佳明国际
           SOURCE: 'GARMIN_CN'
           TARGET: 'GARMIN_GLOBAL'
           SYNC_ACTIVITY_START_TIME: ${{ secrets.SYNC_ACTIVITY_START_TIME }}
         run: |
-          python scripts/garmin_to_garmin_global.py
+          python main.py --source GARMIN_CN --target GARMIN_GLOBAL
