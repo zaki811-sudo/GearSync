@@ -25,11 +25,14 @@ jobs:
 
       - name: Run Sync Script
         env:
-          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
-          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
-          COROS_EMAIL: ${{ secrets.COROS_EMAIL }}
-          COROS_PASSWORD: ${{ secrets.COROS_PASSWORD }}
-          GARMIN_INTL_EMAIL: ${{ secrets.GARMIN_INTL_EMAIL }}
-          GARMIN_INTL_PASSWORD: ${{ secrets.GARMIN_INTL_PASSWORD }}
+          # 平台凭证（从 Secrets 读取）
+          GARMIN_CN_EMAIL: ${{ secrets.GARMIN_CN_EMAIL }}
+          GARMIN_CN_PASSWORD: ${{ secrets.GARMIN_CN_PASSWORD }}
+          GARMIN_GLOBAL_EMAIL: ${{ secrets.GARMIN_GLOBAL_EMAIL }}
+          GARMIN_GLOBAL_PASSWORD: ${{ secrets.GARMIN_GLOBAL_PASSWORD }}
+          # 同步参数配置：佳明国内 -> 佳明国际
+          SOURCE: 'GARMIN_CN'
+          TARGET: 'GARMIN_GLOBAL'
+          SYNC_ACTIVITY_START_TIME: ${{ secrets.SYNC_ACTIVITY_START_TIME }}
         run: |
-          python main.py
+          python scripts/garmin_to_garmin_global.py
