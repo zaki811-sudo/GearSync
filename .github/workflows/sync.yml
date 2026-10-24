@@ -1,0 +1,35 @@
+name: GearSync Workflow
+
+on:
+  schedule:
+    # 每天 UTC 23:00（即北京时间每天早上 07:00）自动运行
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 允许在 Actions 页面手动点击 Run workflow 触发
+
+jobs:
+  run-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Sync Script
+        env:
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          COROS_EMAIL: ${{ secrets.COROS_EMAIL }}
+          COROS_PASSWORD: ${{ secrets.COROS_PASSWORD }}
+          GARMIN_INTL_EMAIL: ${{ secrets.GARMIN_INTL_EMAIL }}
+          GARMIN_INTL_PASSWORD: ${{ secrets.GARMIN_INTL_PASSWORD }}
+        run: |
+          python main.py
